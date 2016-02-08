@@ -33,7 +33,7 @@ extern void set_noecho(int fd);
 
 
 pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const char *dirpath,
-		       const char *pts_name, int fdm, const char *err_pts_name, int err_fdm, int console)
+		       const char *pts_name, int fdm, const char *err_pts_name, int err_fdm, int console, int euid)
 {
 	pid_t childpid;
 	char *full_path;
@@ -61,6 +61,10 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 		int fds;
 		int err_fds;
 
+		if (euid > -1 && seteuid(euid) < 0) {
+			perror("seteuid()");
+			return -1;
+		}
 		if (!console && setsid() < 0) {
 			perror("setsid()");
 			return -1;

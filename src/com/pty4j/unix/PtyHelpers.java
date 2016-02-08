@@ -115,6 +115,10 @@ public class PtyHelpers {
 
     int close(int fdm);
 
+    int seteuid(int euid);
+    
+    int geteuid();
+
     String ptsname(int fdm);
 
     int killpg(int pid, int sig);
@@ -398,8 +402,9 @@ public class PtyHelpers {
                             int fdm,
                             String err_pts_name,
                             int err_fdm,
-                            boolean console) {
-    return myPtyExecutor.execPty(full_path, argv, envp, dirpath, pts_name, fdm, err_pts_name, err_fdm, console);
+                            boolean console,
+                            int euid) {
+    return myPtyExecutor.execPty(full_path, argv, envp, dirpath, pts_name, fdm, err_pts_name, err_fdm, console, euid);
   }
 
   public static class winsize extends Structure {

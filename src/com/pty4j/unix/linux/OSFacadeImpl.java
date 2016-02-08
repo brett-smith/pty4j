@@ -67,6 +67,10 @@ public class OSFacadeImpl implements PtyHelpers.OSFacade {
     int fork();
 
     int setsid();
+    
+    int seteuid(int suid);
+    
+    int geteuid();
 
     int getpid();
 
@@ -248,5 +252,15 @@ public class OSFacadeImpl implements PtyHelpers.OSFacade {
   @Override
   public void chdir(String dirpath) {
     m_Clib.chdir(dirpath);
+  }
+
+  @Override
+  public int seteuid(int euid) {
+	return m_Clib.seteuid(euid);
+  }
+
+  @Override
+  public int geteuid() {
+	return m_Clib.geteuid();
   }
 }

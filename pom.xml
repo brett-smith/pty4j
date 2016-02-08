@@ -1,0 +1,227 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<properties>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>
+	</properties>
+
+	<groupId>pty4j</groupId>
+	<artifactId>pty4j</artifactId>
+	<packaging>jar</packaging>
+	<version>0.5-SSHTOOLS-SNAPSHOT</version>
+	<name>PtyJ</name>
+	<description>Pty4J.</description>
+	<url>${sitesUrl}/${project.groupId}.${project.artifactId}</url>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<outputDirectory>classes</outputDirectory>
+
+		<plugins>
+
+			<plugin>
+				<groupId>com.github.maven-nar</groupId>
+				<artifactId>nar-maven-plugin</artifactId>
+				<version>3.2.3</version>
+				<extensions>true</extensions>
+
+				<executions>
+					<execution>
+						<id>compile-native-amd64</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>nar-compile</goal>
+						</goals>
+						<configuration>
+							<architecture>amd64</architecture>
+							<libraries>
+								<library>
+									<type>shared</type>
+									<narSystemPackage>com.pty4j</narSystemPackage>
+								</library>
+							</libraries>
+							<c>
+								<sourceDirectory>native</sourceDirectory>
+								<includes>
+									<include>*.c</include>
+								</includes>
+							</c>
+						</configuration>
+					</execution>
+					
+					
+					<execution>
+						<id>compile-native-i386</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>nar-compile</goal>
+						</goals>
+						<configuration>
+							<architecture>i386</architecture>
+							<libraries>
+								<library>
+									<type>shared</type>
+									<narSystemPackage>com.pty4j</narSystemPackage>
+								</library>
+							</libraries>
+							<c>
+								<sourceDirectory>native</sourceDirectory>
+								<includes>
+									<include>*.c</include>
+								</includes>
+							</c>
+						</configuration>
+					</execution>
+					
+					
+					<execution>
+						<id>package-native</id>
+						<phase>package</phase>
+						<goals>
+							<goal>nar-package</goal>
+						</goals>
+						<!-- <configuration> <libraries> <library> <type>shared</type> </library> 
+							</libraries> <c> <sourceDirectory>native</sourceDirectory> <includes> <include>*.c</include> 
+							</includes> </c> </configuration> -->
+					</execution>
+				</executions>
+
+
+
+			</plugin>
+
+		</plugins>
+	</build>
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<url>${project.url}/LICENSE.txt</url>
+		</license>
+	</licenses>
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>14.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>4.1.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna-platform</artifactId>
+			<version>4.1.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sparetimelabs</groupId>
+			<artifactId>purejavacomm</artifactId>
+			<version>0.0.17</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>native-lib-loader</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>mac</id>
+			<activation>
+				<os>
+					<name>mac os x</name>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+				</plugins>
+			</build>
+			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</swt.artifactId> 
+				<swt.version>4.2.1</swt.version> </properties> -->
+		</profile>
+		<profile>
+			<id>windows</id>
+			<activation>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
+			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.win32.win32.x86_64</swt.artifactId> 
+				<swt.version>4.2.1</swt.version> </properties> -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.maven-nar</groupId>
+						<artifactId>nar-maven-plugin</artifactId>
+						<version>3.2.3</version>
+						<extensions>true</extensions>
+
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>nar-compile</goal>
+								</goals>
+								<configuration>
+									<libraries>
+										<library>
+											<type>executable</type>
+										</library>
+									</libraries>
+									<c>
+										<sourceDirectory>native/cyglaunch</sourceDirectory>
+										<includes>
+											<include>*.c</include>
+										</includes>
+									</c>
+								</configuration>
+							</execution>
+						</executions>
+
+
+
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>linux</id>
+			<activation>
+				<os>
+					<family>linux</family>
+				</os>
+			</activation>
+			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</swt.artifactId> 
+				<swt.version>4.2.1</swt.version> </properties> -->
+		</profile>
+	</profiles>
+	<repositories>
+		<repository>
+			<id>sparetimelabs</id>
+			<name>Sparetime labs (for Purejavacomm)</name>
+			<url>http://www.sparetimelabs.com/maven2</url>
+		</repository>
+	</repositories>
+</project>

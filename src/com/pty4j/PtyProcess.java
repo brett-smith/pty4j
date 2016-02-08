@@ -57,10 +57,15 @@ public abstract class PtyProcess extends Process {
 
   @Deprecated
   public static PtyProcess exec(String[] command, String[] environment, String workingDirectory, boolean console) throws IOException {
+    return exec(command, environment, workingDirectory,console, -1);
+  }
+
+  @Deprecated
+  public static PtyProcess exec(String[] command, String[] environment, String workingDirectory, boolean console, int euid) throws IOException {
     if (Platform.isWindows()) {
       return new WinPtyProcess(command, environment, workingDirectory, console);
     }
-    return new UnixPtyProcess(command, environment, workingDirectory, new Pty(console), console ? new Pty() : null);
+    return new UnixPtyProcess(command, environment, workingDirectory, new Pty(console), console ? new Pty() : null, euid);
   }
 
   public static PtyProcess exec(String[] command, Map<String, String> environment, String workingDirectory, boolean console)
@@ -70,12 +75,16 @@ public abstract class PtyProcess extends Process {
 
   public static PtyProcess exec(String[] command, Map<String, String> environment, String workingDirectory, boolean console, boolean cygwin,
                                 File logFile) throws IOException {
+	  return exec(command, environment, workingDirectory, console, cygwin, logFile, -1);
+  }
+  public static PtyProcess exec(String[] command, Map<String, String> environment, String workingDirectory, boolean console, boolean cygwin,
+                                File logFile, int euid) throws IOException {
     if (Platform.isWindows()) {
       if (cygwin) {
         return new CygwinPtyProcess(command, environment, workingDirectory, logFile, console);
       }
       return new WinPtyProcess(command, Advapi32Util.getEnvironmentBlock(environment), workingDirectory, console);
     }
-    return new UnixPtyProcess(command, PtyUtil.toStringArray(environment), workingDirectory, new Pty(console), console ? new Pty() : null);
+    return new UnixPtyProcess(command, PtyUtil.toStringArray(environment), workingDirectory, new Pty(console), console ? new Pty() : null, euid);
   }
 }

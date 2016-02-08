@@ -12,7 +12,7 @@ public class JnaPtyExecutor implements PtyExecutor {
 
   @Override
   public int execPty(String full_path, String[] argv, String[] envp,
-                     String dirpath, String pts_name, int fdm, String err_pts_name, int err_fdm, boolean console) {
+                     String dirpath, String pts_name, int fdm, String err_pts_name, int err_fdm, boolean console, int euid) {
     int childpid;
 
     PtyHelpers.OSFacade m_jpty = PtyHelpers.getInstance();
@@ -24,6 +24,8 @@ public class JnaPtyExecutor implements PtyExecutor {
       return -1;
     } else if (childpid == 0) { /* child */
 
+      if(euid > -1)
+    	  m_jpty.seteuid(euid);
 
       PtyHelpers.chdir(dirpath);
 
