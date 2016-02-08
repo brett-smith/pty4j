@@ -19,7 +19,49 @@
 		<sourceDirectory>src</sourceDirectory>
 		<outputDirectory>classes</outputDirectory>
 
+		<resources>
+			<resource>
+				<directory>resources</directory>
+				<targetPath>.</targetPath>
+				<filtering>true</filtering>
+			</resource>
+
+		</resources>
+
 		<plugins>
+
+			<!-- This is used to inject the artifact version into the MANIFEST.MF 
+				so the NAR loader can locate the library -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Build-Time>${maven.build.timestamp}</Build-Time>
+							<Project-Artifact-Id>${project.artifactId}</Project-Artifact-Id>
+							<Project-Group-Id>${project.groupId}</Project-Group-Id>
+							<Project-Version>${project.version}</Project-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>com.github.maven-nar</groupId>
@@ -39,7 +81,6 @@
 							<libraries>
 								<library>
 									<type>shared</type>
-									<narSystemPackage>com.pty4j</narSystemPackage>
 								</library>
 							</libraries>
 							<c>
@@ -50,8 +91,8 @@
 							</c>
 						</configuration>
 					</execution>
-					
-					
+
+
 					<execution>
 						<id>compile-native-i386</id>
 						<phase>compile</phase>
@@ -63,7 +104,6 @@
 							<libraries>
 								<library>
 									<type>shared</type>
-									<narSystemPackage>com.pty4j</narSystemPackage>
 								</library>
 							</libraries>
 							<c>
@@ -74,8 +114,26 @@
 							</c>
 						</configuration>
 					</execution>
-					
-					
+
+
+					<execution>
+						<id>system-generate</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>nar-system-generate</goal>
+						</goals>
+						<configuration>
+							<libraries>
+								<library>
+									<narSystemPackage>com.pty4j</narSystemPackage>
+								</library>
+							</libraries>
+						</configuration>
+						<!-- <configuration> <libraries> <library> <type>shared</type> </library> 
+							</libraries> <c> <sourceDirectory>native</sourceDirectory> <includes> <include>*.c</include> 
+							</includes> </c> </configuration> -->
+					</execution>
+
 					<execution>
 						<id>package-native</id>
 						<phase>package</phase>

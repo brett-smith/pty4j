@@ -218,20 +218,28 @@ public class PtyHelpers {
   private static PtyExecutor myPtyExecutor;
 
   static {
-    try {
-      File lib = PtyUtil.resolveNativeLibrary();
-
-      myPtyExecutor = new NativePtyExecutor(lib.getAbsolutePath());
-    }
-    catch (Exception e) {
-      LOG.error("Can't load native pty executor library", e);
-      myPtyExecutor = null;
-    }
+	try {
+	  /* First look for NarSystem in com.pty4j. This would mean the library is being loaded from
+	  * a Maven dependency with NAR support.
+	  */
+	  myPtyExecutor = new NARPtyExecutor();
+	}
+	catch(Exception e) {
+	    try {
+	      File lib = PtyUtil.resolveNativeLibrary();
+	      myPtyExecutor = new NativePtyExecutor(lib.getAbsolutePath());
+	    }
+	    catch (Exception e2) {
+	      LOG.error("Can't load native pty executor library", e2);
+	      myPtyExecutor = null;
+	    }
+	}
     
     if (myPtyExecutor == null) {
       LOG.warn("Using JNA version of PtyExecutor");
       myPtyExecutor = new JnaPtyExecutor();
     }
+    
   }
 
   public static OSFacade getInstance() {
