@@ -22,34 +22,7 @@
 		<sourceDirectory>src</sourceDirectory>
 		<outputDirectory>classes</outputDirectory>
 
-		<resources>
-			<resource>
-				<directory>resources</directory>
-				<targetPath>.</targetPath>
-				<filtering>true</filtering>
-			</resource>
-
-		</resources>
-
 		<plugins>
-
-			<!-- This is used to inject the artifact version into the MANIFEST.MF 
-				so the NAR loader can locate the library -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Build-Time>${maven.build.timestamp}</Build-Time>
-							<Project-Artifact-Id>${project.artifactId}</Project-Artifact-Id>
-							<Project-Group-Id>${project.groupId}</Project-Group-Id>
-							<Project-Version>${project.version}</Project-Version>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-
 
 
 			<plugin>
@@ -66,6 +39,50 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>make-a-jar</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>${project.artifactId}-${project.version}-natives</finalName>
+							<classesDirectory>${basedir}/os</classesDirectory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>attach-native-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<classifier>natives</classifier>
+									<file>target/${project.artifactId}-${project.version}-natives.jar</file>
+									<type>jar</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 	</build>
@@ -133,8 +150,6 @@
 				<plugins>
 				</plugins>
 			</build>
-			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</swt.artifactId> 
-				<swt.version>4.2.1</swt.version> </properties> -->
 		</profile>
 		<profile>
 			<id>windows-cygwin</id>
@@ -147,10 +162,9 @@
 					<family>windows</family>
 				</os>
 			</activation>
-			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.win32.win32.x86_64</swt.artifactId> 
-				<swt.version>4.2.1</swt.version> </properties> -->
 			<build>
 				<plugins>
+
 					<plugin>
 						<groupId>com.github.maven-nar</groupId>
 						<artifactId>nar-maven-plugin</artifactId>
@@ -177,59 +191,6 @@
 										</includes>
 										<options>
 											<option>-march=i386</option>
-										</options>
-									</c>
-									<linker>
-										<name>gcc</name>
-									</linker>
-								</configuration>
-							</execution>
-						</executions>
-
-
-
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>windows-winpty</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.win32.win32.x86_64</swt.artifactId> 
-				<swt.version>4.2.1</swt.version> </properties> -->
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.github.maven-nar</groupId>
-						<artifactId>nar-maven-plugin</artifactId>
-						<version>3.2.3</version>
-						<extensions>true</extensions>
-
-						<executions>
-							<execution>
-								<phase>compile</phase>
-								<goals>
-									<goal>nar-compile</goal>
-								</goals>
-								<configuration>
-									<libraries>
-										<library>
-											<type>shared</type>
-										</library>
-									</libraries>
-									<c>
-										<name>gcc</name>
-										<sourceDirectory>native/winpty</sourceDirectory>
-										<includes>
-											<include>*.cc</include>
-										</includes>
-										<options>
-											<option>-march=i386</option>
-											<option>-I${basedir}/native/winpty</option>
 										</options>
 									</c>
 									<linker>

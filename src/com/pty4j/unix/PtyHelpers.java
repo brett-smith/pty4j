@@ -222,7 +222,7 @@ public class PtyHelpers {
 	  /* First look for NarSystem in com.pty4j. This would mean the library is being loaded from
 	  * a Maven dependency with NAR support.
 	  */
-	  myPtyExecutor = new NARPtyExecutor();
+	  myPtyExecutor = new SelfExtractingPtyExecutor();
 	}
 	catch(Exception e) {
 	    try {
