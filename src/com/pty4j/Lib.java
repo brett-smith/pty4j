@@ -15,8 +15,6 @@ public class Lib {
 		final String ao = getAO();
 		final ClassLoader loader = SelfExtractingPtyExecutor.class.getClassLoader();
 		try {
-			File tf = File.createTempFile("lib", ao.replace("/", "_"));
-			tf.deleteOnExit();
 			URL resource = loader.getResource(ao);
 			if (resource == null) {
 				/*
@@ -32,6 +30,8 @@ public class Lib {
 				throw new RuntimeException(
 						"The appropriate Pty4J library could not be found either on the classpath or anywhere in java.library.path. Please correct this.");
 			} else {
+				File tf = File.createTempFile("lib", ao.replace("/", "_"));
+				tf.deleteOnExit();
 				FileOutputStream out = new FileOutputStream(tf);
 				try {
 					Resources.copy(resource, out);

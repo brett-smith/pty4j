@@ -225,6 +225,7 @@ public class PtyHelpers {
 	  myPtyExecutor = new SelfExtractingPtyExecutor();
 	}
 	catch(Exception e) {
+		e.printStackTrace();
 	    try {
 	      File lib = PtyUtil.resolveNativeLibrary();
 	      myPtyExecutor = new NativePtyExecutor(lib.getAbsolutePath());

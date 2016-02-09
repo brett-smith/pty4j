@@ -148,6 +148,88 @@
 			</activation>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>com.github.maven-nar</groupId>
+						<artifactId>nar-maven-plugin</artifactId>
+						<version>3.2.3</version>
+						<extensions>true</extensions>
+
+						<executions>
+							<execution>
+								<id>compile-native-amd64</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>nar-compile</goal>
+								</goals>
+								<configuration>
+									<architecture>amd64</architecture>
+									<libraries>
+										<library>
+											<type>shared</type>
+										</library>
+									</libraries>
+									<c>
+										<sourceDirectory>native</sourceDirectory>
+										<includes>
+											<include>*.c</include>
+										</includes>
+									</c>
+								</configuration>
+							</execution>
+
+
+							<execution>
+								<id>compile-native-i386</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>nar-compile</goal>
+								</goals>
+								<configuration>
+									<architecture>i386</architecture>
+									<libraries>
+										<library>
+											<type>shared</type>
+										</library>
+									</libraries>
+									<c>
+										<sourceDirectory>native</sourceDirectory>
+										<includes>
+											<include>*.c</include>
+										</includes>
+									</c>
+								</configuration>
+							</execution>
+
+
+						</executions>
+
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+
+						<executions>
+							<execution>
+								<id>copy-macosx-natives</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+									
+										<!-- TODO ... Lee - These will probably need editing -->
+									
+										<copy tofile="${basedir}/os/macosx/x86/libpty.so"
+											file="${basedir}/target/nar/${project.artifactId}-${project.version}-i386-XXXXX-gpp-shared/lib/i386-XXXXX-gpp/shared/lib${project.artifactId}-${project.version}.so" />
+										<copy tofile="${basedir}/os/macosx/x86_64/libpty.so"
+											file="${basedir}/target/nar/${project.artifactId}-${project.version}-amd64-XXXXX-gpp-shared/lib/amd64-XXXXX-gpp/shared/lib${project.artifactId}-${project.version}.so" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -268,43 +350,34 @@
 							</execution>
 
 
-							<execution>
-								<id>system-generate</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>nar-system-generate</goal>
-								</goals>
-								<configuration>
-									<libraries>
-										<library>
-											<narSystemPackage>com.pty4j</narSystemPackage>
-										</library>
-									</libraries>
-								</configuration>
-								<!-- <configuration> <libraries> <library> <type>shared</type> </library> 
-									</libraries> <c> <sourceDirectory>native</sourceDirectory> <includes> <include>*.c</include> 
-									</includes> </c> </configuration> -->
-							</execution>
-
-							<execution>
-								<id>package-native</id>
-								<phase>package</phase>
-								<goals>
-									<goal>nar-package</goal>
-								</goals>
-								<!-- <configuration> <libraries> <library> <type>shared</type> </library> 
-									</libraries> <c> <sourceDirectory>native</sourceDirectory> <includes> <include>*.c</include> 
-									</includes> </c> </configuration> -->
-							</execution>
 						</executions>
 
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
 
-
+						<executions>
+							<execution>
+								<id>copy-linux-natives</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy tofile="${basedir}/os/linux/x86/libpty.so"
+											file="${basedir}/target/nar/${project.artifactId}-${project.version}-i386-Linux-gpp-shared/lib/i386-Linux-gpp/shared/lib${project.artifactId}-${project.version}.so" />
+										<copy tofile="${basedir}/os/linux/x86_64/libpty.so"
+											file="${basedir}/target/nar/${project.artifactId}-${project.version}-amd64-Linux-gpp-shared/lib/amd64-Linux-gpp/shared/lib${project.artifactId}-${project.version}.so" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
-			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</swt.artifactId> 
-				<swt.version>4.2.1</swt.version> </properties> -->
 		</profile>
 	</profiles>
 	<repositories>
