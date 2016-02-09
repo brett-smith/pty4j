@@ -81,7 +81,7 @@ public abstract class PtyProcess extends Process {
                                 File logFile, int euid) throws IOException {
     if (Platform.isWindows()) {
       if (cygwin) {
-        return new CygwinPtyProcess(command, environment, workingDirectory, logFile, console);
+        return new CygwinPtyProcess(command, environment, workingDirectory, logFile, console, euid);
       }
       return new WinPtyProcess(command, Advapi32Util.getEnvironmentBlock(environment), workingDirectory, console);
     }

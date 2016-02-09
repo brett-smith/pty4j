@@ -5,6 +5,9 @@
 	<properties>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.source>1.7</maven.compiler.source>
+
+		<build.winpty>true</build.winpty>
+		<build.cygwin>false</build.cygwin>
 	</properties>
 
 	<groupId>pty4j</groupId>
@@ -63,92 +66,6 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>com.github.maven-nar</groupId>
-				<artifactId>nar-maven-plugin</artifactId>
-				<version>3.2.3</version>
-				<extensions>true</extensions>
-
-				<executions>
-					<execution>
-						<id>compile-native-amd64</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>nar-compile</goal>
-						</goals>
-						<configuration>
-							<architecture>amd64</architecture>
-							<libraries>
-								<library>
-									<type>shared</type>
-								</library>
-							</libraries>
-							<c>
-								<sourceDirectory>native</sourceDirectory>
-								<includes>
-									<include>*.c</include>
-								</includes>
-							</c>
-						</configuration>
-					</execution>
-
-
-					<execution>
-						<id>compile-native-i386</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>nar-compile</goal>
-						</goals>
-						<configuration>
-							<architecture>i386</architecture>
-							<libraries>
-								<library>
-									<type>shared</type>
-								</library>
-							</libraries>
-							<c>
-								<sourceDirectory>native</sourceDirectory>
-								<includes>
-									<include>*.c</include>
-								</includes>
-							</c>
-						</configuration>
-					</execution>
-
-
-					<execution>
-						<id>system-generate</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>nar-system-generate</goal>
-						</goals>
-						<configuration>
-							<libraries>
-								<library>
-									<narSystemPackage>com.pty4j</narSystemPackage>
-								</library>
-							</libraries>
-						</configuration>
-						<!-- <configuration> <libraries> <library> <type>shared</type> </library> 
-							</libraries> <c> <sourceDirectory>native</sourceDirectory> <includes> <include>*.c</include> 
-							</includes> </c> </configuration> -->
-					</execution>
-
-					<execution>
-						<id>package-native</id>
-						<phase>package</phase>
-						<goals>
-							<goal>nar-package</goal>
-						</goals>
-						<!-- <configuration> <libraries> <library> <type>shared</type> </library> 
-							</libraries> <c> <sourceDirectory>native</sourceDirectory> <includes> <include>*.c</include> 
-							</includes> </c> </configuration> -->
-					</execution>
-				</executions>
-
-
-
-			</plugin>
 
 		</plugins>
 	</build>
@@ -220,8 +137,12 @@
 				<swt.version>4.2.1</swt.version> </properties> -->
 		</profile>
 		<profile>
-			<id>windows</id>
+			<id>windows-cygwin</id>
 			<activation>
+				<property>
+					<name>build.cygwin</name>
+					<value>true</value>
+				</property>
 				<os>
 					<family>windows</family>
 				</os>
@@ -249,11 +170,71 @@
 										</library>
 									</libraries>
 									<c>
+										<name>gcc</name>
 										<sourceDirectory>native/cyglaunch</sourceDirectory>
 										<includes>
 											<include>*.c</include>
 										</includes>
+										<options>
+											<option>-march=i386</option>
+										</options>
 									</c>
+									<linker>
+										<name>gcc</name>
+									</linker>
+								</configuration>
+							</execution>
+						</executions>
+
+
+
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>windows-winpty</id>
+			<activation>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
+			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.win32.win32.x86_64</swt.artifactId> 
+				<swt.version>4.2.1</swt.version> </properties> -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.maven-nar</groupId>
+						<artifactId>nar-maven-plugin</artifactId>
+						<version>3.2.3</version>
+						<extensions>true</extensions>
+
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>nar-compile</goal>
+								</goals>
+								<configuration>
+									<libraries>
+										<library>
+											<type>shared</type>
+										</library>
+									</libraries>
+									<c>
+										<name>gcc</name>
+										<sourceDirectory>native/winpty</sourceDirectory>
+										<includes>
+											<include>*.cc</include>
+										</includes>
+										<options>
+											<option>-march=i386</option>
+											<option>-I${basedir}/native/winpty</option>
+										</options>
+									</c>
+									<linker>
+										<name>gcc</name>
+									</linker>
 								</configuration>
 							</execution>
 						</executions>
@@ -271,6 +252,96 @@
 					<family>linux</family>
 				</os>
 			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.maven-nar</groupId>
+						<artifactId>nar-maven-plugin</artifactId>
+						<version>3.2.3</version>
+						<extensions>true</extensions>
+
+						<executions>
+							<execution>
+								<id>compile-native-amd64</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>nar-compile</goal>
+								</goals>
+								<configuration>
+									<architecture>amd64</architecture>
+									<libraries>
+										<library>
+											<type>shared</type>
+										</library>
+									</libraries>
+									<c>
+										<sourceDirectory>native</sourceDirectory>
+										<includes>
+											<include>*.c</include>
+										</includes>
+									</c>
+								</configuration>
+							</execution>
+
+
+							<execution>
+								<id>compile-native-i386</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>nar-compile</goal>
+								</goals>
+								<configuration>
+									<architecture>i386</architecture>
+									<libraries>
+										<library>
+											<type>shared</type>
+										</library>
+									</libraries>
+									<c>
+										<sourceDirectory>native</sourceDirectory>
+										<includes>
+											<include>*.c</include>
+										</includes>
+									</c>
+								</configuration>
+							</execution>
+
+
+							<execution>
+								<id>system-generate</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>nar-system-generate</goal>
+								</goals>
+								<configuration>
+									<libraries>
+										<library>
+											<narSystemPackage>com.pty4j</narSystemPackage>
+										</library>
+									</libraries>
+								</configuration>
+								<!-- <configuration> <libraries> <library> <type>shared</type> </library> 
+									</libraries> <c> <sourceDirectory>native</sourceDirectory> <includes> <include>*.c</include> 
+									</includes> </c> </configuration> -->
+							</execution>
+
+							<execution>
+								<id>package-native</id>
+								<phase>package</phase>
+								<goals>
+									<goal>nar-package</goal>
+								</goals>
+								<!-- <configuration> <libraries> <library> <type>shared</type> </library> 
+									</libraries> <c> <sourceDirectory>native</sourceDirectory> <includes> <include>*.c</include> 
+									</includes> </c> </configuration> -->
+							</execution>
+						</executions>
+
+
+
+					</plugin>
+				</plugins>
+			</build>
 			<!-- <properties> <swt.groupId>org.eclipse.swt</swt.groupId> <swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</swt.artifactId> 
 				<swt.version>4.2.1</swt.version> </properties> -->
 		</profile>
