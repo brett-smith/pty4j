@@ -29,11 +29,12 @@ import com.sun.jna.Platform;
 import com.sun.jna.Structure;
 import jtermios.JTermios;
 import jtermios.Termios;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -41,7 +42,8 @@ import java.util.List;
  * emulating such system calls on non POSIX systems.
  */
 public class PtyHelpers {
-  private static final Logger LOG = Logger.getLogger(PtyHelpers.class);
+	
+	final static Logger LOG = Logger.getLogger("PtyHelpers");
 
   /**
    * Provides a OS-specific interface to the PtyHelpers methods.
@@ -231,13 +233,13 @@ public class PtyHelpers {
 	      myPtyExecutor = new NativePtyExecutor(lib.getAbsolutePath());
 	    }
 	    catch (Exception e2) {
-	      LOG.error("Can't load native pty executor library", e2);
+	      LOG.log(Level.SEVERE, "Can't load native pty executor library", e2);
 	      myPtyExecutor = null;
 	    }
 	}
     
     if (myPtyExecutor == null) {
-      LOG.warn("Using JNA version of PtyExecutor");
+      LOG.warning("Using JNA version of PtyExecutor");
       myPtyExecutor = new JnaPtyExecutor();
     }
     
