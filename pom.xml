@@ -146,13 +146,13 @@
 
 						<executions>
 							<execution>
-								<id>compile-native-amd64</id>
+								<id>compile-native-x86_64</id>
 								<phase>compile</phase>
 								<goals>
 									<goal>nar-compile</goal>
 								</goals>
 								<configuration>
-									<architecture>amd64</architecture>
+									<architecture>x86_64</architecture>
 									<libraries>
 										<library>
 											<type>shared</type>
@@ -211,10 +211,10 @@
 									
 										<!-- TODO ... Lee - These will probably need editing -->
 									
-										<copy tofile="${basedir}/os/macosx/x86/libpty.so"
-											file="${basedir}/target/nar/${project.artifactId}-${project.version}-i386-XXXXX-gpp-shared/lib/i386-XXXXX-gpp/shared/lib${project.artifactId}-${project.version}.so" />
-										<copy tofile="${basedir}/os/macosx/x86_64/libpty.so"
-											file="${basedir}/target/nar/${project.artifactId}-${project.version}-amd64-XXXXX-gpp-shared/lib/amd64-XXXXX-gpp/shared/lib${project.artifactId}-${project.version}.so" />
+										<copy tofile="${basedir}/os/macosx/x86/libpty.dylib"
+											file="${basedir}/target/nar/${project.artifactId}-${project.version}-i386-MacOSX-gpp-shared/lib/i386-MacOSX-gpp/shared/lib${project.artifactId}-${project.version}.dylib" />
+										<copy tofile="${basedir}/os/macosx/x86_64/libpty.dylib"
+											file="${basedir}/target/nar/${project.artifactId}-${project.version}-x86_64-MacOSX-gpp-shared/lib/x86_64-MacOSX-gpp/shared/lib${project.artifactId}-${project.version}.dylib" />
 									</target>
 								</configuration>
 							</execution>
