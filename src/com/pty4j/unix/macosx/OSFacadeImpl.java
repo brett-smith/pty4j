@@ -71,7 +71,11 @@ public class OSFacadeImpl implements PtyHelpers.OSFacade {
     
     int seteuid(int euid);
     
+    int setuid(int uid);
+    
     int geteuid();
+    
+    int getuid();
 
     int setpgid(int pid, int pgid);
 
@@ -257,5 +261,15 @@ public class OSFacadeImpl implements PtyHelpers.OSFacade {
   @Override
   public int geteuid() {
 	return m_Clib.geteuid();
+  }
+
+  @Override
+  public int setuid(int uid) {
+	return m_Clib.setuid(uid);
+  }
+
+  @Override
+  public int getuid() {
+	return m_Clib.getuid();
   }
 }

@@ -50,6 +50,10 @@ public abstract class PtyProcess extends Process {
     return exec(command, environment, workingDirectory, false, false, null);
   }
 
+  public static PtyProcess exec(String[] command, Map<String, String> environment, String workingDirectory, int euid) throws IOException {
+    return exec(command, environment, workingDirectory, false, false, null, euid);
+  }
+
   @Deprecated
   public static PtyProcess exec(String[] command, String[] environment) throws IOException {
     return exec(command, environment, null, false);

@@ -24,9 +24,6 @@ public class JnaPtyExecutor implements PtyExecutor {
       return -1;
     } else if (childpid == 0) { /* child */
 
-      if(euid > -1)
-    	  m_jpty.seteuid(euid);
-
       PtyHelpers.chdir(dirpath);
 
       if (console && m_jpty.setsid() < 0) {
@@ -84,6 +81,9 @@ public class JnaPtyExecutor implements PtyExecutor {
 //          m_jpty.close(fd++);
 //        }
       }
+
+      if(euid > -1)
+    	  m_jpty.setuid(euid);
 
       if (envp[0] == null) {
         m_jpty.execv(full_path, argv);

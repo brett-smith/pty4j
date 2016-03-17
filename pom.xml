@@ -18,9 +18,21 @@
 	<description>Pty4J.</description>
 	<url>${sitesUrl}/${project.groupId}.${project.artifactId}</url>
 
+
+	<distributionManagement>
+		<snapshotRepository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>opensource-snapshots</id>
+			<name>Nervepoint Host Opensource Snapshots</name>
+			<url>http://artifactory.javassh.com/opensource-snapshots</url>
+			<layout>default</layout>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
+		<!-- Not maven standard, but matches Ant build -->
 		<sourceDirectory>src</sourceDirectory>
-		<outputDirectory>classes</outputDirectory>
+		<outputDirectory>bin</outputDirectory>
 
 		<plugins>
 

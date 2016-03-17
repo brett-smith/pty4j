@@ -118,8 +118,12 @@ public class PtyHelpers {
     int close(int fdm);
 
     int seteuid(int euid);
+
+    int setuid(int euid);
     
     int geteuid();
+    
+    int getuid();
 
     String ptsname(int fdm);
 
