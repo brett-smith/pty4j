@@ -11,16 +11,18 @@
  *     Mikhail Zabaluev (Nokia) - bug 82744
  *     Mikhail Sennikovsky - bug 145737
  *******************************************************************************/
-#include <unistd.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
-
+#include <unistd.h>
 #include <grp.h>
 #include "exec_pty.h"
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 int test();
 
@@ -35,7 +37,7 @@ extern void set_noecho(int fd);
 
 
 pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const char *dirpath,
-		       const char *pts_name, int fdm, const char *err_pts_name, int err_fdm, int console, uid_t euid)
+		       const char *pts_name, int fdm, const char *err_pts_name, int err_fdm, int console, uid_t uid, bool do_setuid)
 {
 	pid_t childpid;
 	uid_t  ruid;
@@ -61,9 +63,9 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 
 		/* child */
 
-		if(!console && euid > 0) {
+		if(!console && do_setuid) {
 			gid_t gid = getgrnam("tty");
-			if (chown(pts_name, euid, gid) != 0 ||
+			if (chown(pts_name, uid, gid) != 0 ||
 					    chmod(pts_name, S_IRUSR | S_IWUSR | S_IWGRP) != 0) {
 				fprintf(stderr, "%s(%d): failed to chown or chmod %s. %s\n", __FUNCTION__, __LINE__, pts_name, strerror(errno));
 				free(full_path);
@@ -124,11 +126,11 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 				close(fd++);
 		}
 
-		if(!console && euid > 0) {
+		if(!console && do_setuid) {
 			int status;
-			status = setuid (euid);
+			status = setuid (uid);
 			if (status < 0) {
-				perror("seteuid()");
+				perror("setuid()");
 				return -1;
 			}
 		}
